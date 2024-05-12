@@ -1,27 +1,27 @@
 package com.ccettour.conversordemonedas.principal;
 
 import com.ccettour.conversordemonedas.calculos.ConsultaIndice;
+import com.ccettour.conversordemonedas.modelos.Moneda;
 
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class principal {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         ConsultaIndice consultaIndice = new ConsultaIndice();
 
-        Map<String, String> monedas = new HashMap<>();
-        monedas.put("ARS", "Peso argentino");
-        monedas.put("BOB", "Boliviano boliviano");
-        monedas.put("BRL", "Real brasileño");
-        monedas.put("CLP", "Peso chileno");
-        monedas.put("COP", "Peso colombiano");
-        monedas.put("USD", "Dólar estadounidense");
+        Moneda pesoArgentino = new Moneda("ARS", "Peso argentino");
+        Moneda bolivianoBoliviano = new Moneda("BOB", "Boliviano boliviano");
+        Moneda realBrasil = new Moneda("BRL", "Real brasileño");
+        Moneda pesoChileno = new Moneda("CLP", "Peso chileno");
+        Moneda pesoColombiano = new Moneda("COP", "Peso colombiano");
+        Moneda dolarEstadounidense = new Moneda("USD", "Dólar estadounidense");
 
-        String monedaBase;
-        String monedaTarget;
+        List<Moneda> monedas = new ArrayList<>(Arrays.asList(pesoArgentino,bolivianoBoliviano,realBrasil,pesoChileno,pesoColombiano,dolarEstadounidense));
+
+
+        Moneda monedaBase;
+        Moneda monedaTarget;
 
         var opcion = 0;
         while(opcion==0){
@@ -34,44 +34,39 @@ public class principal {
                 break;
             }
 
-            do{
-                System.out.println("Ingrese la moneda base:\n" +
-                        "ARS - Peso argentino\n" +
-                        "BOB - Boliviano boliviano\n" +
-                        "BRL - Real brasileño\n" +
-                        "CLP - Peso chileno\n" +
-                        "COP - Peso colombiano\n" +
-                        "USD - Dólar estadounidense");
-
-                monedaBase = sc.next().toUpperCase();
-
-                if(!monedas.containsKey(monedaBase)){
-                    System.out.println("El código ingresado es inválido.\n");
+            try{
+                System.out.println("\nIngrese la moneda base:");
+                for (int i = 0; i < monedas.size(); i++) {
+                    System.out.println(i+1 + " - " + monedas.get(i).getNombre());
                 }
-            } while(!monedas.containsKey(monedaBase));
 
-            do{
-                System.out.println("Ingrese la moneda final:\n" +
-                        "ARS - Peso argentino\n" +
-                        "BOB - Boliviano boliviano\n" +
-                        "BRL - Real brasileño\n" +
-                        "CLP - Peso chileno\n" +
-                        "COP - Peso colombiano\n" +
-                        "USD - Dólar estadounidense");
+                int seleccion = sc.nextInt();
+                monedaBase = monedas.get(seleccion-1);
+            } catch(InputMismatchException | IndexOutOfBoundsException e){
+                System.out.println("Debe ingresar el número correspondiente a la moneda deseada");
+                break;
+            }
 
-                monedaTarget = sc.next().toUpperCase();
-                if(!monedas.containsKey(monedaTarget)){
-                    System.out.println("El código ingresado es inválido.\n");
+            try{
+                System.out.println("\nIngrese la moneda a la que desea convertir el valor:");
+                for (int i = 0; i < monedas.size(); i++) {
+                    System.out.println(i+1 + " - " + monedas.get(i).getNombre());
                 }
-            } while(!monedas.containsKey(monedaTarget));
 
-            double indice = consultaIndice.getIndice(monedaBase,monedaTarget);
+                int seleccion = sc.nextInt();
+                monedaTarget = monedas.get(seleccion-1);
+            }catch(InputMismatchException | IndexOutOfBoundsException e){
+                System.out.println("Debe ingresar el número correspondiente a la moneda deseada");
+                break;
+            }
+
+            double indice = consultaIndice.getIndice(monedaBase.getCodigo(),monedaTarget.getCodigo());
 
             double resultado = valor * indice;
 
-            System.out.println(valor + " " + monedas.get(monedaBase) + " equivalen a " + resultado + " " + monedas.get(monedaTarget));
+            System.out.println("\n" + valor + " " + monedaBase.getNombre() + " equivalen a " + resultado + " " + monedaTarget.getNombre());
 
-            System.out.println("¿Desea realizar otra conversión?\n" +
+            System.out.println("\n¿Desea realizar otra conversión?\n" +
                     "0 - SI\n" +
                     "1 - NO");
 
